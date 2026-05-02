@@ -1,0 +1,48 @@
+import { Trash2, FolderKanban } from 'lucide-react';
+import type{ Proyecto } from '../../interfaces/Proyecto';
+import Button from '../ui/Button';
+import EmptyState from '../ui/EmptyState';
+
+interface Props {
+    proyectos: Proyecto[];
+    loading: boolean;
+    onEliminar: (id: number) => void;
+}
+
+export default function ProyectosTable({ proyectos, loading, onEliminar }: Props) {
+    if (loading) return <div className="text-center py-12 text-slate-400 animate-pulse">Cargando proyectos...</div>;
+    if (!proyectos.length) return <EmptyState icon={FolderKanban} title="Sin proyectos" description="Crea el primer proyecto." />;
+
+    return (
+        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+            <table className="w-full text-sm">
+                <thead className="bg-slate-50 text-slate-600 font-semibold">
+                    <tr>
+                        <th className="text-left px-5 py-3">#</th>
+                        <th className="text-left px-5 py-3">Nombre</th>
+                        <th className="text-left px-5 py-3">Descripción</th>
+                        <th className="text-left px-5 py-3">Responsable</th>
+                        <th className="text-left px-5 py-3">Creado</th>
+                        <th className="text-left px-5 py-3">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {proyectos.map((p) => (
+                        <tr key={p.id} className="border-t border-slate-50 hover:bg-slate-50/50 transition-colors">
+                            <td className="px-5 py-3 text-slate-400">{p.id}</td>
+                            <td className="px-5 py-3 font-medium text-slate-800">{p.nombre}</td>
+                            <td className="px-5 py-3 text-slate-500 max-w-xs truncate">{p.descripcion || '—'}</td>
+                            <td className="px-5 py-3 text-slate-600">{p.usuario?.nombre || `ID: ${p.usuarioId}`}</td>
+                            <td className="px-5 py-3 text-slate-400">{new Date(p.creadoEn).toLocaleDateString('es-BO')}</td>
+                            <td className="px-5 py-3">
+                                <Button variant="danger" onClick={() => onEliminar(p.id)} icon={<Trash2 size={14} />}>
+                                    Eliminar
+                                </Button>
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+        </div>
+    );
+}
